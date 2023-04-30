@@ -1,0 +1,16 @@
+{
+  "name": "[Youtube -> Piped] redirect",
+  "description": "Redirects (some of) youtube links to piped.video",
+  "version": "0.0.2",
+
+  "background": {
+    "scripts": ["js.js"]
+  },
+  "permissions": [
+    "*://www.youtube.com/*",
+    "webRequest",
+    "webRequestBlocking"
+  ],
+
+  "manifest_version": 2
+}
