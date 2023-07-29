@@ -1,29 +1,25 @@
 {
-  "name": "[Youtube -> Piped] redirect",
-  "description": "Redirects (some of) youtube links to piped.video",
-  "version": "0.0.3",
-
+  "name": "Youtube redirect",
+  "description": "Redirects (some of) youtube links to alternative frontends",
+  "version": "1.1",
+  "manifest_version": 2,
   "background": {
-    "scripts": ["js.js"]
+    "scripts": [
+      "redirectListener.js"
+    ]
   },
   "icons": {
     "48": "icon.jpeg"
   },
-
   "browser_action": {
     "default_icon": "icon.jpeg",
-    "default_title": "Piped Redirect"
+    "default_title": "Youtube redirect",
+    "default_popup": "popup.html"
   },
-
-  "background": {
-    "scripts": ["js.js"]
-  },
-
   "permissions": [
     "*://www.youtube.com/*",
     "webRequest",
-    "webRequestBlocking"
-  ],
-
-  "manifest_version": 2
+    "webRequestBlocking",
+    "storage"
+  ]
 }

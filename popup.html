@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body style='width: max-content;'>
+  <div id='redirect-instance' style='display: inline'></div>
+  <input type='checkbox' checked id='is-enabled-checkbox' style='transform: scale(1.3)'/>
+  <br />
+  <button id='change-instance-btn' style='margin-top: 1rem'>
+    Change redirect instance
+  </button>
+  <br />
+  <div hidden id='change-instance-wrap'>
+    <input id='instance-input' size='11' title='base url to use for redirecting'/>
+    <div style='color: red' id='error'></div>
+    <button id='instance-save-btn'>Save</button>
+    <button id='instance-reset-btn'>Reset</button>
+  </div>
+<script src='popup.js'></script>
+</body>
+</html>
