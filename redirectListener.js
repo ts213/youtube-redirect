@@ -1,34 +1,37 @@
+'use strict';
+
 const defaultInstanceUrl = 'https://piped.video';
 let currentInstanceUrl;
 let isEnabled;
 
-browser.storage.local.get(['url', 'isEnabled']).then(({ url, isEnabled: _isEnabled }) => {
-  currentInstanceUrl = url || defaultInstanceUrl;
+browser.storage.local.get(['url', 'isEnabled']).then(
+  ({ url, isEnabled }) => {
+    currentInstanceUrl = url || defaultInstanceUrl;
 
-  isEnabled = _isEnabled;
-  isEnabled === false
-    ? toggleIconDisabled()
-    : redirectListener();
-});
+    isEnabled === false
+      ? toggleIconDisabled()
+      : redirectListener();
+  }
+);
 
+// return a Promise only for the messages the listener is meant to respond to — and otherwise return false or undefined
+// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/runtime/onMessage
 browser.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
-    switch (msg.type) {
-      case 'popupInit':
-        return Promise.resolve({
-          defaultInstanceUrl,
-          currentInstanceUrl,
-          isEnabled,
-        });
-      // use storage.onChange event?
-      case 'urlChanged':
-        setCurrentInstanceUrl();
-        break;
-      case 'checkboxToggled':
-        toggleListener(msg.isChecked);
-        isEnabled = msg.isChecked;
-        break;
-      default:
-        return false;
+    if (msg.type === 'popupInit') {
+      return Promise.resolve({
+        defaultInstanceUrl,
+        currentInstanceUrl,
+        isEnabled,
+      });
+    }
+
+    // use storage.onChange event?
+    else if (msg.type === 'urlChanged') {
+      setCurrentInstanceUrl();
+    }
+    else if (msg.type === 'checkboxToggled') {
+      toggleListener(msg.isChecked);
+      isEnabled = msg.isChecked;
     }
   }
 );
@@ -43,20 +46,6 @@ function stopListener() {
   toggleIconDisabled();
 }
 
-function toggleListener(isChecked) {
-  isChecked
-    ? startListener()
-    : stopListener();
-}
-
-function setCurrentInstanceUrl() {
-  browser.storage.local.get('url').then(obj => {
-      console.log(obj);
-      currentInstanceUrl = obj.url || defaultInstanceUrl
-    }
-  );
-}
-
 function redirect(requestDetails) {
   const { pathname, search } = new URL(requestDetails.url);
   return { redirectUrl: currentInstanceUrl + pathname + search };
@@ -65,8 +54,26 @@ function redirect(requestDetails) {
 function redirectListener() {
   browser.webRequest.onBeforeRequest.addListener(
     redirect,
-    { urls: ['*://www.youtube.com/', '*://www.youtube.com/watch*', '*://www.youtube.com/c*'] },
+    {
+      urls: [
+        '*://*.youtube.com/',
+        '*://*.youtube.com/watch*',
+        '*://*.youtube.com/c*'
+      ]
+    },
     ['blocking']
+  );
+}
+
+function toggleListener(isChecked) {
+  isChecked
+    ? startListener()
+    : stopListener();
+}
+
+function setCurrentInstanceUrl() {
+  browser.storage.local.get('url').then(obj =>
+    currentInstanceUrl = obj.url || defaultInstanceUrl
   );
 }
 

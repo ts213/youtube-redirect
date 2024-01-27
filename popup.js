@@ -1,5 +1,8 @@
+'use strict';
+
 let defaultInstanceUrl;
 let currentInstanceUrl;
+let isEnabled;
 
 sendMessage({ type: 'popupInit' })
   .then(msgResponse => {
@@ -46,7 +49,7 @@ function sendMessage({ type, isChecked = undefined }) {
   } else {
     browser.runtime.sendMessage({
       type,
-      'isChecked': isChecked
+      'isChecked': isChecked,
     });
   }
 }
@@ -65,8 +68,8 @@ function updateUI(url) {
 
 function storage_setUrl(key, value) {
   return browser.storage.local.set({
-    [key]: value
-  })
+    [key]: value,
+  });
 }
 
 function storage_removeUrl() {
@@ -74,17 +77,19 @@ function storage_removeUrl() {
 }
 
 function validateUrl() {
-  // add proper url validation? todo
   const input = document.getElementById('instance-input');
   let url = input.value;
   url = url.trim();
   url = url.endsWith('/') ? url.slice(0, -1) : url;
   if (
-    !url.match(/https*:\/\//) ||
-    !url.length
+    !url.length ||
+    !url.match(/\w+\.\w+/)
   ) {
-    document.getElementById('error').innerText = 'Invalid url.\nNo "http(s)://..."?';
+    document.getElementById('error').innerText = 'Invalid URL';
     throw new Error('Invalid url');
+  }
+  if (!url.match(/^https*:\/\/.+/)) {
+    url = 'https://' + url;
   }
   setTimeout(() => input.value = '', 100);
   return url;
