@@ -5,9 +5,10 @@ let currentInstanceUrl;
 let isEnabled;
 
 browser.storage.local.get(['url', 'isEnabled']).then(
-  ({ url, isEnabled }) => {
+  ({ url, isEnabled: _isEnabled }) => {
     currentInstanceUrl = url || defaultInstanceUrl;
 
+    isEnabled = _isEnabled;
     isEnabled === false
       ? toggleIconDisabled()
       : redirectListener();

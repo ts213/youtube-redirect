@@ -1,8 +1,12 @@
 {
   "name": "Youtube redirect",
   "description": "Redirects (some of) youtube links to alternative frontends",
-  "version": "1.2",
+  "version": "1.2.1",
   "manifest_version": 2,
+  "browser_specific_settings": {
+    "gecko": { "id": "{6f2d31bc-4639-4e04-b3a2-4f4f010b8186}" }
+  },
+
   "background": { "scripts": ["redirectListener.js"] },
   "icons": { "48": "icon.jpeg" },
   "browser_action": {
